@@ -56,6 +56,14 @@
         </transformers>
       </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <configuration>
+          <mainClass>com.facebook.research.asynchronousratchetingtree.Main</mainClass>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
