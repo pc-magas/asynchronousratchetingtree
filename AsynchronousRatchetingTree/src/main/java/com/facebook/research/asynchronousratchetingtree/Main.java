@@ -8,20 +8,21 @@
 
 package com.facebook.research.asynchronousratchetingtree;
 
-import com.facebook.research.asynchronousratchetingtree.art.ARTTestImplementation;
 import com.facebook.research.asynchronousratchetingtree.art.ARTSetupPhase;
 import com.facebook.research.asynchronousratchetingtree.art.ARTState;
+import com.facebook.research.asynchronousratchetingtree.art.ARTTestImplementation;
 import com.facebook.research.asynchronousratchetingtree.crypto.DHPubKey;
 import com.facebook.research.asynchronousratchetingtree.dhratchet.DHRatchet;
 import com.facebook.research.asynchronousratchetingtree.dhratchet.DHRatchetSetupPhase;
 import com.facebook.research.asynchronousratchetingtree.dhratchet.DHRatchetState;
 
+import javax.crypto.Cipher;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
-import javax.crypto.Cipher;
 
 public class Main {
+
   private static boolean debug = true;
 
   public static void main(String[] args) {
@@ -41,7 +42,9 @@ public class Main {
     for (int i = 2; i < 20; i += 2) {
       artTestRun(i, i);
     }
+
     int lastNumber = 1;
+
     for (double i = 2.0; i <= test_size_limit; i *= multiplier) {
       int n = (int) i;
       if (n == lastNumber) {
@@ -74,10 +77,12 @@ public class Main {
     }
 
     Iterator<TestResult> dhIterator = dhResults.iterator();
+
     while (dhIterator.hasNext()) {
       TestResult r = dhIterator.next();
       r.output();
     }
+
   }
 
   private static TestResult artTestRun(int n, int activePeers) {
@@ -137,11 +142,13 @@ public class Main {
     GroupMessagingSetupPhase<TState> setupPhase,
     GroupMessagingTestImplementation<TState> implementation
   ) {
+
     String testName = implementation.getClass().getSimpleName();
     if (debug) Utils.print("\nStarting " + testName + " test run with " + n + " participants, of which " + activeCount  + " active.\n");
     TestResult result = new TestResult(testName, n, activeCount);
 
     if (debug) Utils.print("Creating random messages and senders.");
+
     SecureRandom random = new SecureRandom();
     Set<Integer> activeSet = new HashSet<>();
     activeSet.add(0); // We always want the initiator in the set.
@@ -152,8 +159,10 @@ public class Main {
 
     int messagesToSend = 100;
     int messageLength = 32; // Message length 32 bytes, so we can compare as if we were just sending a symmetric key.
+
     int[] messageSenders = new int[messagesToSend];
     byte[][] messages = new byte[messagesToSend][messageLength];
+
     for (int i = 0; i < messagesToSend; i++) {
       // We're only interested in ratcheting events, so senders should always be
       // different from the previous sender.
@@ -205,7 +214,9 @@ public class Main {
     if (debug) Utils.print("Sending " + messagesToSend + " messages.");
     int totalSendSizes = 0;
     int totalReceiveSizes = 0;
+
     for (int i = 0; i < messagesToSend; i++) {
+
       int sender = messageSenders[i];
       byte[] message = messages[i];
       stopwatch1.startInterval();
@@ -228,7 +239,9 @@ public class Main {
           Utils.except("Message doesn't match.");
         }
       }
+
     }
+
     if (debug) Utils.print("Total sending time " + stopwatch1.getTotal() + " nanoseconds.");
     if (debug) Utils.print("Total receiving time " + stopwatch2.getTotal() + " nanoseconds.");
     if (debug) Utils.print("Total bytes sent: " + totalSendSizes + ".");
@@ -242,4 +255,6 @@ public class Main {
 
     return result;
   }
+
+
 }
