@@ -22,9 +22,10 @@ public class TestExecutor
     public final static  int messageLength = 32;
 
 
-    public TextExecutor(GroupMessagingState[] states,
+    public TestExecutor(GroupMessagingState[] states,
                         GroupMessagingSetupPhase<GroupMessagingState> setupPhase,
-                        GroupMessagingTestImplementation<GroupMessagingState> implementation
+                        GroupMessagingTestImplementation<GroupMessagingState> implementation,
+                        int n, int activeCount
     ){
         this.n = n;
         this.activeCount = activeCount;
@@ -70,7 +71,7 @@ public class TestExecutor
         while (activeSet.size() < activeCount) {
             activeSet.add(random.nextInt(n));
         }
-        return active = activeSet.toArray(new Integer[0]);
+        return activeSet.toArray(new Integer[0]);
     }
 
     /**
@@ -103,7 +104,7 @@ public class TestExecutor
         // Messages
         int[] messageSenders= new int[this.messagesToSend];
         byte[][] messages= new byte[this.messagesToSend][this.messageLength];
-        this.bootstrapMessages(messageSenders,messages);
+        this.bootstrapMessages(messageSenders,messages,active);
 
         //Identities & keys
         DHPubKey[] identities = new DHPubKey[n];
