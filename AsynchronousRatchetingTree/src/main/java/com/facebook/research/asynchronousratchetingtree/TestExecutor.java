@@ -9,11 +9,8 @@ import java.util.Set;
 
 public class TestExecutor
 {
-
-    private final int n;
-    private final int activeCount;
-    private GroupMessagingSetupPhase<GroupMessagingState> setupPhase;
-    private final GroupMessagingTestImplementation<GroupMessagingState> implementation;
+    private GroupMessagingSetupPhase <GroupMessagingState> setupPhase;
+    private final GroupMessagingTestImplementation <GroupMessagingState> implementation;
     private GroupMessagingState[] states=null;
     private SecureRandom random = null;
 
@@ -24,11 +21,8 @@ public class TestExecutor
 
     public TestExecutor(GroupMessagingState[] states,
                         GroupMessagingSetupPhase<GroupMessagingState> setupPhase,
-                        GroupMessagingTestImplementation<GroupMessagingState> implementation,
-                        int n, int activeCount
+                        GroupMessagingTestImplementation<GroupMessagingState> implementation
     ){
-        this.n = n;
-        this.activeCount = activeCount;
         this.states = states;
         this.setupPhase = setupPhase;
         this.implementation = implementation;
@@ -48,7 +42,7 @@ public class TestExecutor
      * @param messages The messages themselves that will be generates
      * @param activeUsers 
      */
-    private void bootstrapMessages(int[] messageSenders, byte[][] messages, Integer[] activeUsers) {
+    private void bootstrapMessages(int[] messageSenders, byte[][] messages, int activeCount, Integer[] activeUsers) {
 
         for (int i = 0; i < this.messagesToSend; i++) {
             // We're only interested in ratcheting events, so senders should always be
@@ -65,7 +59,7 @@ public class TestExecutor
     /**
      * Generating an Active User Set
      */
-    private Integer[] bootstrapActiveUsers(){
+    private Integer[] bootstrapActiveUsers(int n, int activeCount){
         Set<Integer> activeSet = new HashSet<>();
         activeSet.add(0); // We always want the initiator in the set.
         while (activeSet.size() < activeCount) {
@@ -78,7 +72,7 @@ public class TestExecutor
      * Generating the Keys
      * @param identities
      */
-    private KeyServer bootstrapKeys(DHPubKey[] identities){
+    private KeyServer bootstrapKeys(DHPubKey[] identities, int n){
         // Create the necessary setup tooling in advance.
         for (int i = 0; i < n ; i++) {
             identities[i] = this.states[i].getIdentityKeyPair().getPubKey();
@@ -93,22 +87,22 @@ public class TestExecutor
      * @param debug Whether debug messages will be printed
      * @return
      */
-    public <TState> TestResult run(int n, int activeCount, boolean debug)
+    public TestResult run(int n, int activeCount, boolean debug)
     {
         String testName = this.implementation.getClass().getSimpleName();
         TestResult result = new TestResult(testName, n, activeCount);
 
         // Bootstrapping code
-        Integer[] active=this.bootstrapActiveUsers();
+        Integer[] active=this.bootstrapActiveUsers(n,activeCount);
 
         // Messages
         int[] messageSenders= new int[this.messagesToSend];
         byte[][] messages= new byte[this.messagesToSend][this.messageLength];
-        this.bootstrapMessages(messageSenders,messages,active);
+        this.bootstrapMessages(messageSenders,messages, activeCount,active);
 
         //Identities & keys
         DHPubKey[] identities = new DHPubKey[n];
-        KeyServer keyServer = this.bootstrapKeys(identities);
+        KeyServer keyServer = this.bootstrapKeys(identities,n);
         this.setupPhase.generateNecessaryPreKeys(this.states);
 
 
@@ -198,7 +192,7 @@ public class TestExecutor
     {
         Stopwatch stopwatch1 = new Stopwatch();
 
-        if (debug) Utils.print("Setting up session for " + activeCount + " peers.");
+        if (debug) Utils.print("Setting up session for " + active.length + " peers.");
         stopwatch1.startInterval();
         this.setupPhase.setupAllOthers(implementation, this.states, active, identities, keyServer);
         stopwatch1.endInterval();
