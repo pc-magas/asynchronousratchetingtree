@@ -3,13 +3,13 @@ package com.facebook.asynchronousrachetingtree.executor;
 public class AbstractTestExecutorParams implements ExecutionParams {
 
     private int n=0;
-    private int activecount=0;
+    private int activeCount=0;
     private boolean debug=false;
 
     public AbstractTestExecutorParams(int n, int activeCount, boolean debug)
     {
         this.n=n;
-        this.activecount=activeCount;
+        this.activeCount=activeCount;
         this.debug=debug;
     }
 
@@ -21,7 +21,7 @@ public class AbstractTestExecutorParams implements ExecutionParams {
         return debug;
     }
 
-    public int getActivecount() {
-        return activecount;
+    public int getActiveCount() {
+        return activeCount;
     }
 }

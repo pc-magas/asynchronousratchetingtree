@@ -89,9 +89,10 @@ abstract public class AbstractTestExecutor implements TestExecutor {
     @Override
     public ResultStorage run( ExecutionParams params )
     {
-        int n=(AbstractTestExecutorParams) params.getN();
-        int activeCount=(AbstractTestExecutorParams) params.getActiveCount();
-        boolean debug=(AbstractTestExecutorParams) params.isDebug();
+        AbstractTestExecutorParams execParams= (AbstractTestExecutorParams)params;
+        int n=execParams.getN();
+        int activeCount= execParams.getActiveCount();
+        boolean debug=execParams.isDebug();
 
         String testName = this.implementation.getClass().getSimpleName();
         TestResult result = new TestResult(testName, n, activeCount);
