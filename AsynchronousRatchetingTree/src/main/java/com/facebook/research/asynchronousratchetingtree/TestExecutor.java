@@ -95,10 +95,7 @@ public class TestExecutor
         // Bootstrapping code
         Integer[] active=this.bootstrapActiveUsers(n,activeCount);
 
-        // Messages
-        int[] messageSenders= new int[this.messagesToSend];
-        byte[][] messages= new byte[this.messagesToSend][this.messageLength];
-        this.bootstrapMessages(messageSenders,messages, activeCount,active);
+
 
         //Identities & keys
         DHPubKey[] identities = new DHPubKey[n];
@@ -108,7 +105,7 @@ public class TestExecutor
 
         this.setupArt(result,identities,keyServer,debug);
         this.setUpOthers(result,active,identities,keyServer,debug);
-        this.testMessageSendAndReceive(result,messageSenders,messages,active,n,activeCount,debug);
+        this.testMessageSendAndReceive(result,active,n,activeCount,debug);
 
         return result;
     }
@@ -116,15 +113,20 @@ public class TestExecutor
     /**
      * Test message io and fetch results.
      * @param result
-     * @param messageSenders
-     * @param messages
      * @param active
      * @param n
      * @param activeCount
      * @param debug
      */
-    private void testMessageSendAndReceive(TestResult result, int[] messageSenders,byte[][] messages, Integer[] active, int n, int activeCount,boolean debug)
+    private void testMessageSendAndReceive(TestResult result, Integer[] active, int n, int activeCount,boolean debug)
     {
+
+        // Messages
+        int[] messageSenders= new int[this.messagesToSend];
+        byte[][] messages= new byte[this.messagesToSend][this.messageLength];
+        this.bootstrapMessages(messageSenders,messages, activeCount, active);
+
+
         Stopwatch stopwatch1 = new Stopwatch();
         Stopwatch stopwatch2 = new Stopwatch();
 
