@@ -108,7 +108,23 @@ public class TestExecutor
 
         this.setupArt(result,identities,keyServer,debug);
         this.setUpOthers(result,active,identities,keyServer,debug);
+        this.testMessageSendAndReceive(result,messageSenders,messages,active,n,activeCount,debug);
 
+        return result;
+    }
+
+    /**
+     * Test message io and fetch results.
+     * @param result
+     * @param messageSenders
+     * @param messages
+     * @param active
+     * @param n
+     * @param activeCount
+     * @param debug
+     */
+    private void testMessageSendAndReceive(TestResult result, int[] messageSenders,byte[][] messages, Integer[] active, int n, int activeCount,boolean debug)
+    {
         Stopwatch stopwatch1 = new Stopwatch();
         Stopwatch stopwatch2 = new Stopwatch();
 
@@ -155,8 +171,6 @@ public class TestExecutor
         result.setBytesReceived(totalReceiveSizes);
 
         if (debug) Utils.print("Ended test  run with " + n + " participants.\n---------------\n");
-
-        return result;
     }
 
     /**
@@ -166,7 +180,7 @@ public class TestExecutor
      * @param keyServer
      * @param debug
      */
-    void setupArt(TestResult result, DHPubKey[] identities, KeyServer keyServer, boolean debug)
+    private void setupArt(TestResult result, DHPubKey[] identities, KeyServer keyServer, boolean debug)
     {
         Stopwatch stopwatch1 = new Stopwatch();
         if (debug) Utils.print("Setting up session for initiator.");
@@ -176,7 +190,7 @@ public class TestExecutor
         if (debug) Utils.print("Took " + stopwatch1.getTotal() + " nanoseconds.");
         if (debug) Utils.print("Initiator sent " + this.setupPhase.getBytesSentByInitiator() + " bytes.");
         result.setInitiatorSetupTime(stopwatch1.getTotal());
-        result.setInitiatorSetupBytes(setupPhase.getBytesSentByInitiator());
+        result.setInitiatorSetupBytes(this.setupPhase.getBytesSentByInitiator());
         stopwatch1.reset();
     }
 
@@ -188,7 +202,7 @@ public class TestExecutor
      * @param keyServer
      * @param debug
      */
-    void setUpOthers(TestResult result, Integer[] active, DHPubKey[] identities, KeyServer keyServer,boolean debug)
+    private void setUpOthers(TestResult result, Integer[] active, DHPubKey[] identities, KeyServer keyServer,boolean debug)
     {
         Stopwatch stopwatch1 = new Stopwatch();
 
