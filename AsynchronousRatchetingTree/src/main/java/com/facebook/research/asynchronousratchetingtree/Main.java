@@ -8,6 +8,7 @@
 
 package com.facebook.research.asynchronousratchetingtree;
 
+import com.facebook.asynchronousrachetingtree.executor.AbstractTestExecutorParams;
 import com.facebook.research.asynchronousratchetingtree.art.ARTSetupPhase;
 import com.facebook.research.asynchronousratchetingtree.art.ARTState;
 import com.facebook.research.asynchronousratchetingtree.art.ARTTestImplementation;
@@ -145,8 +146,9 @@ public class Main {
     String testName = implementation.getClass().getSimpleName();
     if (debug) Utils.print("\nStarting " + testName + " test run with " + n + " participants, of which " + activeCount  + " active.\n");
 
-    TestExecutor exec= new TestExecutor((GroupMessagingState [])states,(GroupMessagingSetupPhase<GroupMessagingState>) setupPhase, (GroupMessagingTestImplementation<GroupMessagingState>) implementation);
-    return exec.run(n,activeCount,debug);
+    CommonTests exec = new CommonTests((GroupMessagingState[]) states, (GroupMessagingSetupPhase<GroupMessagingState>) setupPhase, (GroupMessagingTestImplementation<GroupMessagingState>) implementation);
+
+    return (TestResult) exec.run(new AbstractTestExecutorParams(n,activeCount,debug));
   }
 
 
