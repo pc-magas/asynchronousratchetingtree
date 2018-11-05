@@ -20,7 +20,9 @@ import com.facebook.research.asynchronousratchetingtree.crypto.DHPubKey;
 import java.util.*;
 
 public class ART {
+
   public static AuthenticatedMessage setupGroup(ARTState state, DHPubKey[] peers, Map<Integer, DHPubKey> preKeys) {
+
     int numPeers = peers.length;
 
     DHKeyPair selfLeaf = DHKeyPair.generate(false);
@@ -40,6 +42,7 @@ public class ART {
         false
       );
     }
+
     SecretNode tree = createTree(leaves);
     state.setIdentities(peers);
     state.setTree(tree);
@@ -67,6 +70,7 @@ public class ART {
     if (!Arrays.equals(state.getPreKeyFor(0).getPubKey().getPubKeyBytes(), message.getEphemeralKeys().get(leafNum).getPubKeyBytes())) {
       Utils.except("Used the wrong ephemeral key.");
     }
+
     SecretLeafNode leaf = new SecretLeafNode(
       DHKeyPair.fromBytes(
         Crypto.keyExchangeReceive(state.getIdentityKeyPair(), message.getIdentities()[0], state.getPreKeyFor(0), message.getKeyExchangeKey()),

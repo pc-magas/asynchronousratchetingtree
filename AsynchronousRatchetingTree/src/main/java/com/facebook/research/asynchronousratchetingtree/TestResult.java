@@ -8,7 +8,9 @@
 
 package com.facebook.research.asynchronousratchetingtree;
 
-public class TestResult {
+import com.facebook.asynchronousrachetingtree.executor.ResultStorage;
+
+public class TestResult implements ResultStorage {
   private String type;
   private int groupSize;
   private int activeUsers;
