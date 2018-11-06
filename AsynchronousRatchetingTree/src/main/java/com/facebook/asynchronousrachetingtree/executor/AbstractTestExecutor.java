@@ -87,7 +87,7 @@ abstract public class AbstractTestExecutor implements TestExecutor {
      * @return
      */
     @Override
-    public ResultStorage run( ExecutionParams params )
+    public TestResultItem run( ExecutionParams params )
     {
         AbstractTestExecutorParams execParams= (AbstractTestExecutorParams)params;
         int n=execParams.getN();
@@ -95,7 +95,7 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         boolean debug=execParams.isDebug();
 
         String testName = this.implementation.getClass().getSimpleName();
-        TestResult result = new TestResult(testName, n, activeCount);
+        TestResultItem result = new TestResultItem();
 
         // Bootstrapping code
         Integer[] active=this.bootstrapActiveUsers(n,activeCount);
@@ -126,7 +126,7 @@ abstract public class AbstractTestExecutor implements TestExecutor {
      * @param activeCount
      * @param debug
      */
-    private void testMessageSendAndReceive(TestResult result, Integer[] active, int n, int activeCount,boolean debug)
+    private void testMessageSendAndReceive(TestResultItem result, Integer[] active, int n, int activeCount,boolean debug)
     {
 
         // Messages
@@ -174,10 +174,11 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         if (debug) Utils.print("Total receiving time " + stopwatch2.getTotal() + " nanoseconds.");
         if (debug) Utils.print("Total bytes sent: " + totalSendSizes + ".");
         if (debug) Utils.print("Total bytes received: " + totalReceiveSizes + ".");
-        result.setSendingTime(stopwatch1.getTotal());
-        result.setReceivingTime(stopwatch2.getTotal());
-        result.setBytesSent(totalSendSizes);
-        result.setBytesReceived(totalReceiveSizes);
+        //result.setSendingTime(stopwatch1.getTotal());
+        result.addResult("sendindg_time", stopwatch1.getTotal());
+        result.addResult("receiving_time", stopwatch2.getTotal());
+        result.addResult("bytes_sent",totalSendSizes);
+        result.addResult("bytes_received",totalReceiveSizes);
 
         if (debug) Utils.print("Ended test  run with " + n + " participants.\n---------------\n");
     }
@@ -189,7 +190,7 @@ abstract public class AbstractTestExecutor implements TestExecutor {
      * @param keyServer The keyServer where Each Participant retrieves the other user participant keys
      * @param debug Whether debug megssages will be displayed
      */
-    private void setupArt(TestResult result, DHPubKey[] identities, KeyServer keyServer, boolean debug)
+    private void setupArt(TestResultItem result, DHPubKey[] identities, KeyServer keyServer, boolean debug)
     {
         Stopwatch stopwatch1 = new Stopwatch();
         if (debug) Utils.print("Setting up session for initiator.");
@@ -198,8 +199,8 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         stopwatch1.endInterval();
         if (debug) Utils.print("Took " + stopwatch1.getTotal() + " nanoseconds.");
         if (debug) Utils.print("Initiator sent " + this.setupPhase.getBytesSentByInitiator() + " bytes.");
-        result.setInitiatorSetupTime(stopwatch1.getTotal());
-        result.setInitiatorSetupBytes(this.setupPhase.getBytesSentByInitiator());
+        result.addResult("initiator_setup_time",stopwatch1.getTotal());
+        result.addResult("initiator_setup_bytes",this.setupPhase.getBytesSentByInitiator());
         stopwatch1.reset();
     }
 
@@ -211,7 +212,7 @@ abstract public class AbstractTestExecutor implements TestExecutor {
      * @param keyServer
      * @param debug
      */
-    private void setUpOthers(TestResult result, Integer[] active, DHPubKey[] identities, KeyServer keyServer,boolean debug)
+    private void setUpOthers(TestResultItem result, Integer[] active, DHPubKey[] identities, KeyServer keyServer,boolean debug)
     {
         Stopwatch stopwatch1 = new Stopwatch();
 
@@ -222,12 +223,12 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         if (debug) Utils.print("Took " + stopwatch1.getTotal() + " nanoseconds.");
         if (debug) Utils.print("Others received " + setupPhase.getBytesReceivedByOthers() + " bytes.");
         if (debug) Utils.print("Others sent " + setupPhase.getBytesSentByOthers() + " bytes.");
-        result.setOthersSetupTime(stopwatch1.getTotal());
-        result.setOthersSetupBytesReceived(setupPhase.getBytesReceivedByOthers());
-        result.setOthersSetupBytesSent(setupPhase.getBytesSentByOthers());
+        result.addResult("other_setup_time", stopwatch1.getTotal());
+        result.addResult("other_setup_received_bytes",setupPhase.getBytesReceivedByOthers());
+        result.addResult("item_setup_sent_bytes",setupPhase.getBytesSentByOthers());
         stopwatch1.reset();
     }
 
 
-    abstract protected void postSetupExecution(TestResult result, ExecutionParams params, Integer[] activeUsers,  DHPubKey[] identities, KeyServer keyServer);
+    abstract protected void postSetupExecution(TestResultItem result, ExecutionParams params, Integer[] activeUsers,  DHPubKey[] identities, KeyServer keyServer);
 }

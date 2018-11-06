@@ -9,6 +9,8 @@
 package com.facebook.research.asynchronousratchetingtree;
 
 import com.facebook.asynchronousrachetingtree.executor.AbstractTestExecutorParams;
+import com.facebook.asynchronousrachetingtree.executor.TestResultItem;
+import com.facebook.asynchronousrachetingtree.executor.TestResults;
 import com.facebook.research.asynchronousratchetingtree.art.ARTSetupPhase;
 import com.facebook.research.asynchronousratchetingtree.art.ARTState;
 import com.facebook.research.asynchronousratchetingtree.art.ARTTestImplementation;
@@ -18,7 +20,6 @@ import com.facebook.research.asynchronousratchetingtree.dhratchet.DHRatchetState
 
 import javax.crypto.Cipher;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
 
 public class Main {
 
@@ -31,8 +32,8 @@ public class Main {
     artTestRun(8, 8);
     dhTestRun(8, 8);
 
-    List<TestResult> artResults = new LinkedList<>();
-    List<TestResult> dhResults = new LinkedList<>();
+    TestResults artResults = new TestResults();
+    TestResults dhResults = new TestResults();
 
     int test_size_limit = 1000;
     double multiplier = 1.5;
@@ -51,7 +52,7 @@ public class Main {
       }
       lastNumber = n;
       System.gc();
-      artResults.add(artTestRun(n, n));
+      artResults.addTestResult(artTestRun(n, n));
     }
 
     // Now run DH tests. Again, warm up the JIT with a few smallish values, and then start recording results.
@@ -65,26 +66,26 @@ public class Main {
         continue;
       }
       System.gc();
-      dhResults.add(dhTestRun(n, n));
+      dhResults.addTestResult(dhTestRun(n, n));
     }
 
-    TestResult.outputHeaderLine();
-    Iterator<TestResult> artIterator = artResults.iterator();
-    while (artIterator.hasNext()) {
-      TestResult r = artIterator.next();
-      r.output();
-    }
-
-    Iterator<TestResult> dhIterator = dhResults.iterator();
-
-    while (dhIterator.hasNext()) {
-      TestResult r = dhIterator.next();
-      r.output();
-    }
+    //@todo refactor on how the results will be exported
+//    Iterator<TestResult> artIterator = artResults.iterator();
+//    while (artIterator.hasNext()) {
+//      TestResult r = artIterator.next();
+//      r.output();
+//    }
+//
+//    Iterator<TestResult> dhIterator = dhResults.iterator();
+//
+//    while (dhIterator.hasNext()) {
+//      TestResult r = dhIterator.next();
+//      r.output();
+//    }
 
   }
 
-  private static TestResult artTestRun(int n, int activePeers) {
+  private static TestResultItem artTestRun(int n, int activePeers) {
     ARTState[] states = new ARTState[n];
 
     for (int i = 0; i < n; i++) {
@@ -118,7 +119,7 @@ public class Main {
     }
   }
 
-  private static TestResult dhTestRun(int n, int activePeers) {
+  private static TestResultItem dhTestRun(int n, int activePeers) {
     DHRatchetState[] states = new DHRatchetState[n];
 
     for (int i = 0; i < n; i++) {
@@ -135,7 +136,7 @@ public class Main {
     );
   }
 
-  private static <TState extends GroupMessagingState> TestResult testRun(
+  private static <TState extends GroupMessagingState> TestResultItem testRun(
     int n,
     int activeCount,
     TState[] states,
@@ -148,7 +149,7 @@ public class Main {
 
     CommonTests exec = new CommonTests((GroupMessagingState[]) states, (GroupMessagingSetupPhase<GroupMessagingState>) setupPhase, (GroupMessagingTestImplementation<GroupMessagingState>) implementation);
 
-    return (TestResult) exec.run(new AbstractTestExecutorParams(n,activeCount,debug));
+    return exec.run(new AbstractTestExecutorParams(n,activeCount,debug));
   }
 
 

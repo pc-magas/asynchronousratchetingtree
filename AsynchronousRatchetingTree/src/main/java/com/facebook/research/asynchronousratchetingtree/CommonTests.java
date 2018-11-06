@@ -2,6 +2,7 @@ package com.facebook.research.asynchronousratchetingtree;
 
 import com.facebook.asynchronousrachetingtree.executor.AbstractTestExecutor;
 import com.facebook.asynchronousrachetingtree.executor.ExecutionParams;
+import com.facebook.asynchronousrachetingtree.executor.TestResultItem;
 import com.facebook.research.asynchronousratchetingtree.crypto.DHPubKey;
 
 public class CommonTests extends AbstractTestExecutor {
@@ -11,7 +12,7 @@ public class CommonTests extends AbstractTestExecutor {
     }
 
     @Override
-    protected void postSetupExecution(TestResult result, ExecutionParams params, Integer[] activeUsers, DHPubKey[] identities, KeyServer keyServer)
+    protected void postSetupExecution(TestResultItem result, ExecutionParams params, Integer[] activeUsers, DHPubKey[] identities, KeyServer keyServer)
     {
 
     }
