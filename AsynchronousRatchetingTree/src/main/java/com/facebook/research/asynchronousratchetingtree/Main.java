@@ -74,7 +74,7 @@ public class Main {
     while (artIterator.hasNext()) {
       TestResultItem r = artIterator.next();
       String csvRow= (String) r.getResultAsCSVRow(CommonTests.CSV_KEYS);
-      Utils.print(csvRow);
+        System.out.println(csvRow);
     }
 
     Iterator<TestResultItem> dhIterator = dhResults.iterator();
@@ -82,7 +82,7 @@ public class Main {
     while (dhIterator.hasNext()) {
       TestResultItem r = dhIterator.next();
       String csvRow = (String) r.getResultAsCSVRow(CommonTests.CSV_KEYS);
-      Utils.print(csvRow);
+      System.out.println(csvRow);
     }
 
   }

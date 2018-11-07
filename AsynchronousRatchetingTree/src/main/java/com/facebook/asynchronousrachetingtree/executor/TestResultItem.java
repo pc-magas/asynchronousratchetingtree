@@ -1,5 +1,6 @@
 package com.facebook.asynchronousrachetingtree.executor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestResultItem {
@@ -20,7 +21,14 @@ public class TestResultItem {
 
     public String getResultAsCSVRow(String[] keys) {
 
-        String endResult= String.join(",", keys);;
+        ArrayList<String> endResults=new ArrayList<String>();
+
+        for(String key:keys)
+        {
+            endResults.add(String.valueOf(this.testResult.get(key)));
+        }
+
+        String endResult= String.join(",",endResults);
         return endResult.substring(0,endResult.length()-1);
     }
 }
