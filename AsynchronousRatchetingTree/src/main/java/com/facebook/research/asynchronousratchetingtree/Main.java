@@ -20,6 +20,7 @@ import com.facebook.research.asynchronousratchetingtree.dhratchet.DHRatchetState
 
 import javax.crypto.Cipher;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 
 public class Main {
 
@@ -69,19 +70,20 @@ public class Main {
       dhResults.addTestResult(dhTestRun(n, n));
     }
 
-    //@todo refactor on how the results will be exported
-//    Iterator<TestResult> artIterator = artResults.iterator();
-//    while (artIterator.hasNext()) {
-//      TestResult r = artIterator.next();
-//      r.output();
-//    }
-//
-//    Iterator<TestResult> dhIterator = dhResults.iterator();
-//
-//    while (dhIterator.hasNext()) {
-//      TestResult r = dhIterator.next();
-//      r.output();
-//    }
+    Iterator<TestResultItem> artIterator = artResults.iterator();
+    while (artIterator.hasNext()) {
+      TestResultItem r = artIterator.next();
+      String csvRow= (String) r.getResultAsCSVRow(CommonTests.CSV_KEYS);
+      Utils.print(csvRow);
+    }
+
+    Iterator<TestResultItem> dhIterator = dhResults.iterator();
+
+    while (dhIterator.hasNext()) {
+      TestResultItem r = dhIterator.next();
+      String csvRow = (String) r.getResultAsCSVRow(CommonTests.CSV_KEYS);
+      Utils.print(csvRow);
+    }
 
   }
 
@@ -143,9 +145,6 @@ public class Main {
     GroupMessagingSetupPhase<TState> setupPhase,
     GroupMessagingTestImplementation<TState> implementation
   ) {
-
-    String testName = implementation.getClass().getSimpleName();
-    if (debug) Utils.print("\nStarting " + testName + " test run with " + n + " participants, of which " + activeCount  + " active.\n");
 
     CommonTests exec = new CommonTests((GroupMessagingState[]) states, (GroupMessagingSetupPhase<GroupMessagingState>) setupPhase, (GroupMessagingTestImplementation<GroupMessagingState>) implementation);
 

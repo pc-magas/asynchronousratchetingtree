@@ -20,6 +20,18 @@ abstract public class AbstractTestExecutor implements TestExecutor {
     public final static  int messageLength = 32;
 
 
+    public static final String TEST_NAME="test_name";
+    public static final String SENDING_TIME="sending_time";
+    public static final String RECEIVING_TIME="receiving_time";
+    public static final String BYTES_SENT="bytes_sent";
+    public static final String BYTES_RECEIVED="bytes_received";
+    public static final String INITIATOR_SETUP_TIME="initiator_setup_time";
+    public static final String INITIATOR_SETUP_BYTES="initiator_setup_bytes";
+    public static final String OTHER_SETUP_TIME="other_setup_time";
+    public static final String OTHER_SETUP_RECEIVED_BYTES="other_setup_received_bytes";
+    public static final String OTHER_SETUP_SENT_BYTES="other_setup_sent_bytes";
+
+
     public AbstractTestExecutor(GroupMessagingState[] states,
                         GroupMessagingSetupPhase<GroupMessagingState> setupPhase,
                         GroupMessagingTestImplementation<GroupMessagingState> implementation
@@ -28,11 +40,6 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         this.setupPhase = setupPhase;
         this.implementation = implementation;
         this.random = new SecureRandom();
-
-    }
-
-    public void bootstap(){
-
 
     }
 
@@ -89,13 +96,18 @@ abstract public class AbstractTestExecutor implements TestExecutor {
     @Override
     public TestResultItem run( ExecutionParams params )
     {
+
+        TestResultItem result = new TestResultItem();
+
         AbstractTestExecutorParams execParams= (AbstractTestExecutorParams)params;
         int n=execParams.getN();
         int activeCount= execParams.getActiveCount();
         boolean debug=execParams.isDebug();
 
         String testName = this.implementation.getClass().getSimpleName();
-        TestResultItem result = new TestResultItem();
+        result.addResult(AbstractTestExecutor.TEST_NAME,testName);
+
+
 
         // Bootstrapping code
         Integer[] active=this.bootstrapActiveUsers(n,activeCount);
@@ -175,10 +187,10 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         if (debug) Utils.print("Total bytes sent: " + totalSendSizes + ".");
         if (debug) Utils.print("Total bytes received: " + totalReceiveSizes + ".");
         //result.setSendingTime(stopwatch1.getTotal());
-        result.addResult("sendindg_time", stopwatch1.getTotal());
-        result.addResult("receiving_time", stopwatch2.getTotal());
-        result.addResult("bytes_sent",totalSendSizes);
-        result.addResult("bytes_received",totalReceiveSizes);
+        result.addResult(AbstractTestExecutor.SENDING_TIME, stopwatch1.getTotal());
+        result.addResult(AbstractTestExecutor.RECEIVING_TIME, stopwatch2.getTotal());
+        result.addResult(AbstractTestExecutor.BYTES_RECEIVED,totalSendSizes);
+        result.addResult(AbstractTestExecutor.BYTES_SENT,totalReceiveSizes);
 
         if (debug) Utils.print("Ended test  run with " + n + " participants.\n---------------\n");
     }
@@ -199,8 +211,8 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         stopwatch1.endInterval();
         if (debug) Utils.print("Took " + stopwatch1.getTotal() + " nanoseconds.");
         if (debug) Utils.print("Initiator sent " + this.setupPhase.getBytesSentByInitiator() + " bytes.");
-        result.addResult("initiator_setup_time",stopwatch1.getTotal());
-        result.addResult("initiator_setup_bytes",this.setupPhase.getBytesSentByInitiator());
+        result.addResult(AbstractTestExecutor.INITIATOR_SETUP_TIME,stopwatch1.getTotal());
+        result.addResult(AbstractTestExecutor.INITIATOR_SETUP_BYTES,this.setupPhase.getBytesSentByInitiator());
         stopwatch1.reset();
     }
 
@@ -223,9 +235,9 @@ abstract public class AbstractTestExecutor implements TestExecutor {
         if (debug) Utils.print("Took " + stopwatch1.getTotal() + " nanoseconds.");
         if (debug) Utils.print("Others received " + setupPhase.getBytesReceivedByOthers() + " bytes.");
         if (debug) Utils.print("Others sent " + setupPhase.getBytesSentByOthers() + " bytes.");
-        result.addResult("other_setup_time", stopwatch1.getTotal());
-        result.addResult("other_setup_received_bytes",setupPhase.getBytesReceivedByOthers());
-        result.addResult("item_setup_sent_bytes",setupPhase.getBytesSentByOthers());
+        result.addResult(AbstractTestExecutor.OTHER_SETUP_TIME, stopwatch1.getTotal());
+        result.addResult(AbstractTestExecutor.OTHER_SETUP_RECEIVED_BYTES,setupPhase.getBytesReceivedByOthers());
+        result.addResult(AbstractTestExecutor.OTHER_SETUP_SENT_BYTES,setupPhase.getBytesSentByOthers());
         stopwatch1.reset();
     }
 
